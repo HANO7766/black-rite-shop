@@ -1,0 +1,19 @@
+# Dependencias y artefactos
+node_modules
+npm-debug.log*
+
+# Base de datos local
+data/
+
+# Entorno
+.env
+.env.local
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Pruebas y capturas
+test-output/
+capturas/

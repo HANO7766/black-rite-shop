@@ -1,0 +1,14 @@
+{
+  "name": "black-rite-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tienda online de poleras de metal: catálogo, carrito y pedidos, sin dependencias.",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.mjs",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server.mjs",
+    "test": "node --disable-warning=ExperimentalWarning tests/shop.test.mjs"
+  }
+}

@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1125" width="900" height="1125" role="img">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08090a"/>
+      <stop offset="0.55" stop-color="#101113"/>
+      <stop offset="1" stop-color="#080809"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="34%" r="68%">
+      <stop offset="0" stop-color="#5f5c57" stop-opacity="0.50"/>
+      <stop offset="0.48" stop-color="#5f5c57" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#5f5c57" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0.92" y2="1">
+      <stop offset="0" stop-color="#242427"/>
+      <stop offset="0.2" stop-color="#151517"/>
+      <stop offset="0.52" stop-color="#0c0c0e"/>
+      <stop offset="0.82" stop-color="#161618"/>
+      <stop offset="1" stop-color="#09090a"/>
+    </linearGradient>
+    <linearGradient id="sleeveLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1b1e"/>
+      <stop offset="1" stop-color="#0b0b0c"/>
+    </linearGradient>
+    <linearGradient id="sleeveRight" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#202023"/>
+      <stop offset="1" stop-color="#0b0b0c"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.055"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1f3f4"/>
+      <stop offset="0.33" stop-color="#8f99a2"/>
+      <stop offset="0.58" stop-color="#f5f6f7"/>
+      <stop offset="0.8" stop-color="#69737c"/>
+      <stop offset="1" stop-color="#c7cdd2"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#000000" flood-opacity="0.72"/>
+    </filter>
+    <filter id="printShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.16"/>
+      </feComponentTransfer>
+    </filter>
+    <radialGradient id="floor" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.82"/>
+      <stop offset="0.70" stop-color="#000000" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="diagonal" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#b8b2a8" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="900" height="1125" fill="url(#bg)"/>
+  <rect width="900" height="1125" fill="url(#glow)"/>
+  <rect width="900" height="1125" fill="url(#diagonal)"/>
+  <g fill="none" stroke="#b8b2a8" stroke-opacity="0.12">
+    <circle cx="450" cy="390" r="310" stroke-width="1"/>
+    <circle cx="450" cy="390" r="360" stroke-width="0.6" stroke-dasharray="2 11"/>
+    <path d="M70 826 L830 220" stroke-width="0.7"/>
+    <path d="M40 900 L790 148" stroke-width="0.5"/>
+  </g>
+  <text x="52" y="64" fill="#e9e5df" fill-opacity="0.38" font-family="Arial, Helvetica, sans-serif" font-size="11" letter-spacing="4">BLACK RITE / ARCHIVE</text>
+  <text x="848" y="64" fill="#e9e5df" fill-opacity="0.38" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" letter-spacing="3">HEAVYWEIGHT TEE</text>
+  <line x1="52" y1="80" x2="210" y2="80" stroke="#b8b2a8" stroke-opacity="0.38"/>
+  <line x1="690" y1="80" x2="848" y2="80" stroke="#b8b2a8" stroke-opacity="0.38"/>
+  <ellipse cx="450" cy="1010" rx="330" ry="68" fill="url(#floor)"/>
+
+
+  <g filter="url(#shadow)">
+    <!-- sleeves -->
+    <path d="M318 212 C354 188 384 176 406 171 L281 392 L206 437 L140 354 L204 278 Z" fill="url(#sleeveLeft)"/>
+    <path d="M582 212 C546 188 516 176 494 171 L619 392 L694 437 L760 354 L696 278 Z" fill="url(#sleeveRight)"/>
+    <!-- torso -->
+    <path d="M318 212 C365 181 405 169 450 169 C495 169 535 181 582 212 L696 278 L760 354 L694 437 L620 392 L620 933 C575 953 325 953 280 933 L280 392 L206 437 L140 354 L204 278 Z"
+          fill="url(#shirt)" stroke="#2e2e32" stroke-width="1.4"/>
+    <!-- cotton sheen -->
+    <path d="M325 226 C397 194 502 194 576 230 L616 394 L606 925 C525 938 365 938 294 925 L284 395 L258 400 L222 361 L211 345 L322 274 Z" fill="url(#sheen)" opacity="0.75"/>
+    <!-- shoulder / arm seams -->
+    <path d="M281 392 C312 375 337 331 344 231" fill="none" stroke="#37373b" stroke-width="1.4" opacity="0.8"/>
+    <path d="M619 392 C588 375 563 331 556 231" fill="none" stroke="#37373b" stroke-width="1.4" opacity="0.8"/>
+    <path d="M206 437 L280 392" fill="none" stroke="#3b3b40" stroke-width="1.2"/>
+    <path d="M694 437 L620 392" fill="none" stroke="#3b3b40" stroke-width="1.2"/>
+    <!-- neckline -->
+    <path d="M381 186 C402 158 498 158 519 186 C500 223 400 223 381 186 Z" fill="#08080a" stroke="#3a3a3e" stroke-width="2"/>
+    <path d="M391 187 C414 168 486 168 509 187 C486 207 414 207 391 187 Z" fill="#151517" stroke="#252529" stroke-width="1.2"/>
+    <path d="M397 190 C426 217 474 217 503 190" fill="none" stroke="#b8b2a8" stroke-opacity="0.23" stroke-width="1"/>
+    <!-- folds and hem -->
+    <g fill="none" stroke="#35353a" stroke-linecap="round" opacity="0.5">
+      <path d="M320 720 C344 751 353 821 343 918" stroke-width="1.2"/>
+      <path d="M567 657 C552 736 563 842 581 919" stroke-width="1.3"/>
+      <path d="M410 860 C431 886 470 892 500 867" stroke-width="0.9"/>
+      <path d="M294 929 C378 943 523 943 607 927" stroke-width="1.1"/>
+      <path d="M306 936 C389 949 512 949 594 934" stroke-width="0.7"/>
+      <path d="M336 486 C354 500 359 525 353 550" stroke-width="0.7"/>
+    </g>
+    <!-- side seams -->
+    <path d="M283 397 C294 564 289 774 282 926" fill="none" stroke="#2a2a2f" stroke-width="1"/>
+    <path d="M617 397 C606 564 611 774 618 926" fill="none" stroke="#2a2a2f" stroke-width="1"/>
+    
+    <g transform="translate(450 505)" filter="url(#printShadow)">
+      <g transform="translate(0 -178)">
+        <path d="M-91 -88 L91 -88 L128 -38 L91 16 L-91 16 L-124 -38 Z" fill="#0b0b0c" stroke="#ece6dc" stroke-width="2"/>
+        <text y="-13" text-anchor="middle" fill="#ece6dc" font-family="Impact, 'Arial Narrow', sans-serif" font-size="46" letter-spacing="9">PANTERA</text>
+      </g>
+      <g transform="translate(0 9)">
+        <g transform="scale(1.06)">
+          <g fill="#d9d6cc" stroke="#0b0b0c" stroke-width="3">
+            <rect x="-72" y="-52" width="31" height="76" rx="10"/>
+            <rect x="-37" y="-73" width="31" height="97" rx="10"/>
+            <rect x="-2" y="-76" width="31" height="100" rx="10"/>
+            <rect x="33" y="-61" width="31" height="85" rx="10"/>
+            <path d="M-88 -16 C-47 -1 40 -3 96 -26 L80 61 C32 94 -49 84 -91 48 Z"/>
+            <path d="M-84 10 C-114 5 -129 25 -110 48 C-96 65 -77 59 -68 42" fill="#d9d6cc" stroke="#0b0b0c" stroke-width="3"/>
+            <path d="M-80 10 C-98 15 -102 31 -89 41" fill="none" stroke="#0b0b0c" stroke-width="2"/>
+            <path d="M-49 -52 V16 M-14 -73 V16 M21 -76 V16 M56 -61 V16" stroke="#0b0b0c" stroke-width="2"/>
+          </g>
+          <g fill="none" stroke="#9c171d" stroke-width="4" opacity="0.8">
+            <path d="M-112 -92 L112 93 M-112 72 L91 -74"/>
+          </g>
+        </g>
+        <text y="164" text-anchor="middle" fill="#e8e2d7" font-family="Impact, 'Arial Narrow', sans-serif" font-size="49" letter-spacing="4">VULGAR</text>
+        <text y="207" text-anchor="middle" fill="#e8e2d7" font-family="Impact, 'Arial Narrow', sans-serif" font-size="49" letter-spacing="4">DISPLAY</text>
+        <text y="250" text-anchor="middle" fill="#a51b22" font-family="Impact, 'Arial Narrow', sans-serif" font-size="42" letter-spacing="9">OF POWER</text>
+      </g>
+    </g>
+    
+    <!-- small woven label -->
+    <g transform="translate(327 888)" opacity="0.75">
+      <rect width="42" height="22" rx="2" fill="#08080a" stroke="#3c3c41"/>
+      <text x="21" y="14" text-anchor="middle" fill="#b8b8bc" font-family="Arial, sans-serif" font-size="7" letter-spacing="1.2">BR / 280</text>
+    </g>
+  </g>
+  <text x="848" y="1080" text-anchor="end" fill="#e9e5df" fill-opacity="0.32" font-family="Arial, sans-serif" font-size="10" letter-spacing="3">BR / 006 · PANTERA</text>
+  <text x="52" y="1080" fill="#e9e5df" fill-opacity="0.32" font-family="Arial, sans-serif" font-size="10" letter-spacing="2">100% COTTON · HEAVYWEIGHT</text>
+
+  <rect width="900" height="1125" filter="url(#grain)" opacity="0.5" style="mix-blend-mode:soft-light"/>
+</svg>

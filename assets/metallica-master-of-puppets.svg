@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1125" width="900" height="1125" role="img">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08090a"/>
+      <stop offset="0.55" stop-color="#101113"/>
+      <stop offset="1" stop-color="#080809"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="34%" r="68%">
+      <stop offset="0" stop-color="#7e8a70" stop-opacity="0.50"/>
+      <stop offset="0.48" stop-color="#7e8a70" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#7e8a70" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0.92" y2="1">
+      <stop offset="0" stop-color="#242427"/>
+      <stop offset="0.2" stop-color="#151517"/>
+      <stop offset="0.52" stop-color="#0c0c0e"/>
+      <stop offset="0.82" stop-color="#161618"/>
+      <stop offset="1" stop-color="#09090a"/>
+    </linearGradient>
+    <linearGradient id="sleeveLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1b1e"/>
+      <stop offset="1" stop-color="#0b0b0c"/>
+    </linearGradient>
+    <linearGradient id="sleeveRight" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#202023"/>
+      <stop offset="1" stop-color="#0b0b0c"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.055"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f1f3f4"/>
+      <stop offset="0.33" stop-color="#8f99a2"/>
+      <stop offset="0.58" stop-color="#f5f6f7"/>
+      <stop offset="0.8" stop-color="#69737c"/>
+      <stop offset="1" stop-color="#c7cdd2"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="28" flood-color="#000000" flood-opacity="0.72"/>
+    </filter>
+    <filter id="printShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.16"/>
+      </feComponentTransfer>
+    </filter>
+    <radialGradient id="floor" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.82"/>
+      <stop offset="0.70" stop-color="#000000" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="diagonal" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#b7c0a8" stroke-opacity="0.055" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="900" height="1125" fill="url(#bg)"/>
+  <rect width="900" height="1125" fill="url(#glow)"/>
+  <rect width="900" height="1125" fill="url(#diagonal)"/>
+  <g fill="none" stroke="#b7c0a8" stroke-opacity="0.12">
+    <circle cx="450" cy="390" r="310" stroke-width="1"/>
+    <circle cx="450" cy="390" r="360" stroke-width="0.6" stroke-dasharray="2 11"/>
+    <path d="M70 826 L830 220" stroke-width="0.7"/>
+    <path d="M40 900 L790 148" stroke-width="0.5"/>
+  </g>
+  <text x="52" y="64" fill="#e9e5df" fill-opacity="0.38" font-family="Arial, Helvetica, sans-serif" font-size="11" letter-spacing="4">BLACK RITE / ARCHIVE</text>
+  <text x="848" y="64" fill="#e9e5df" fill-opacity="0.38" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" letter-spacing="3">HEAVYWEIGHT TEE</text>
+  <line x1="52" y1="80" x2="210" y2="80" stroke="#b7c0a8" stroke-opacity="0.38"/>
+  <line x1="690" y1="80" x2="848" y2="80" stroke="#b7c0a8" stroke-opacity="0.38"/>
+  <ellipse cx="450" cy="1010" rx="330" ry="68" fill="url(#floor)"/>
+
+
+  <g filter="url(#shadow)">
+    <!-- sleeves -->
+    <path d="M318 212 C354 188 384 176 406 171 L281 392 L206 437 L140 354 L204 278 Z" fill="url(#sleeveLeft)"/>
+    <path d="M582 212 C546 188 516 176 494 171 L619 392 L694 437 L760 354 L696 278 Z" fill="url(#sleeveRight)"/>
+    <!-- torso -->
+    <path d="M318 212 C365 181 405 169 450 169 C495 169 535 181 582 212 L696 278 L760 354 L694 437 L620 392 L620 933 C575 953 325 953 280 933 L280 392 L206 437 L140 354 L204 278 Z"
+          fill="url(#shirt)" stroke="#2e2e32" stroke-width="1.4"/>
+    <!-- cotton sheen -->
+    <path d="M325 226 C397 194 502 194 576 230 L616 394 L606 925 C525 938 365 938 294 925 L284 395 L258 400 L222 361 L211 345 L322 274 Z" fill="url(#sheen)" opacity="0.75"/>
+    <!-- shoulder / arm seams -->
+    <path d="M281 392 C312 375 337 331 344 231" fill="none" stroke="#37373b" stroke-width="1.4" opacity="0.8"/>
+    <path d="M619 392 C588 375 563 331 556 231" fill="none" stroke="#37373b" stroke-width="1.4" opacity="0.8"/>
+    <path d="M206 437 L280 392" fill="none" stroke="#3b3b40" stroke-width="1.2"/>
+    <path d="M694 437 L620 392" fill="none" stroke="#3b3b40" stroke-width="1.2"/>
+    <!-- neckline -->
+    <path d="M381 186 C402 158 498 158 519 186 C500 223 400 223 381 186 Z" fill="#08080a" stroke="#3a3a3e" stroke-width="2"/>
+    <path d="M391 187 C414 168 486 168 509 187 C486 207 414 207 391 187 Z" fill="#151517" stroke="#252529" stroke-width="1.2"/>
+    <path d="M397 190 C426 217 474 217 503 190" fill="none" stroke="#b7c0a8" stroke-opacity="0.23" stroke-width="1"/>
+    <!-- folds and hem -->
+    <g fill="none" stroke="#35353a" stroke-linecap="round" opacity="0.5">
+      <path d="M320 720 C344 751 353 821 343 918" stroke-width="1.2"/>
+      <path d="M567 657 C552 736 563 842 581 919" stroke-width="1.3"/>
+      <path d="M410 860 C431 886 470 892 500 867" stroke-width="0.9"/>
+      <path d="M294 929 C378 943 523 943 607 927" stroke-width="1.1"/>
+      <path d="M306 936 C389 949 512 949 594 934" stroke-width="0.7"/>
+      <path d="M336 486 C354 500 359 525 353 550" stroke-width="0.7"/>
+    </g>
+    <!-- side seams -->
+    <path d="M283 397 C294 564 289 774 282 926" fill="none" stroke="#2a2a2f" stroke-width="1"/>
+    <path d="M617 397 C606 564 611 774 618 926" fill="none" stroke="#2a2a2f" stroke-width="1"/>
+    
+    <g transform="translate(450 508)" filter="url(#printShadow)">
+      <text y="-238" text-anchor="middle" fill="#eef1e7" font-family="Impact, 'Arial Narrow', sans-serif" font-size="43" letter-spacing="8">METALLICA</text>
+      <line x1="-160" y1="-211" x2="160" y2="-211" stroke="#aeb9a6" stroke-opacity="0.62"/>
+      <g opacity="0.42"><path d="M-115 -22 V56 M-133 0 H-97" stroke="#d8dfcf" stroke-width="5" stroke-linecap="square"/><path d="M0 -55 V49 M-18 -33 H18" stroke="#d8dfcf" stroke-width="5" stroke-linecap="square"/><path d="M115 -22 V56 M97 0 H133" stroke="#d8dfcf" stroke-width="5" stroke-linecap="square"/><path d="M-61 36 V90 M-79 58 H-43" stroke="#d8dfcf" stroke-width="5" stroke-linecap="square"/><path d="M61 36 V90 M43 58 H79" stroke="#d8dfcf" stroke-width="5" stroke-linecap="square"/></g>
+      <g stroke="#d9dfd2" stroke-width="1.1" opacity="0.8">
+        <path d="M-139 -198 L-34 -105 M0 -217 L0 -108 M139 -198 L34 -105"/>
+        <path d="M-162 -204 H162" stroke-width="5"/>
+      </g>
+      <g transform="translate(0 8)">
+        <circle r="76" fill="#0b0c0b" stroke="#d9dfd2" stroke-width="2.5"/>
+        <path d="M-45 -35 C-54 -8 -45 12 -24 26 L-30 54 L30 54 L24 26 C45 12 54 -8 45 -35 C26 -51 -26 -51 -45 -35 Z" fill="#d9dfd2"/>
+        <path d="M-34 -18 L-13 -11 M13 -11 L34 -18 M-4 4 L0 17 L4 4 Z" fill="#0b0c0b" stroke="#0b0c0b"/>
+        <path d="M-21 37 V54 M-7 37 V54 M7 37 V54 M21 37 V54" stroke="#0b0c0b" stroke-width="2.5"/>
+        <path d="M-27 -38 L-18 -31 M27 -38 L18 -31" stroke="#0b0c0b" stroke-width="2" opacity="0.6"/>
+      </g>
+      <text y="166" text-anchor="middle" fill="#edf0e8" font-family="'Arial Narrow', Arial, sans-serif" font-size="25" letter-spacing="4.5">MASTER OF PUPPETS</text>
+      <text y="195" text-anchor="middle" fill="#8a9482" font-family="Arial, sans-serif" font-size="9" letter-spacing="4">OBEY · CONSUME · REPEAT</text>
+    </g>
+    
+    <!-- small woven label -->
+    <g transform="translate(327 888)" opacity="0.75">
+      <rect width="42" height="22" rx="2" fill="#08080a" stroke="#3c3c41"/>
+      <text x="21" y="14" text-anchor="middle" fill="#b8b8bc" font-family="Arial, sans-serif" font-size="7" letter-spacing="1.2">BR / 280</text>
+    </g>
+  </g>
+  <text x="848" y="1080" text-anchor="end" fill="#e9e5df" fill-opacity="0.32" font-family="Arial, sans-serif" font-size="10" letter-spacing="3">BR / 001 · METALLICA</text>
+  <text x="52" y="1080" fill="#e9e5df" fill-opacity="0.32" font-family="Arial, sans-serif" font-size="10" letter-spacing="2">100% COTTON · HEAVYWEIGHT</text>
+
+  <rect width="900" height="1125" filter="url(#grain)" opacity="0.5" style="mix-blend-mode:soft-light"/>
+</svg>

@@ -1,0 +1,13 @@
+# Contexto de build limpio: el código se copia explícitamente en el Dockerfile.
+.git
+.gitignore
+.env
+.env.local
+node_modules
+data
+tests
+docs
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

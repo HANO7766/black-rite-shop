@@ -45,7 +45,7 @@ app.server.on("error", (error) => {
 
 app.server.listen(PORT, HOST, () => {
   console.log("");
-  console.log("BLACK RITE SHOP · servidor activo");
+  console.log("BLACK RITE SHOP - servidor activo");
   console.log(`  Tienda:    http://127.0.0.1:${PORT}`);
   for (const item of direccionesLan()) {
     console.log(`  Red local: http://${item.address}:${PORT}  (${item.nombre})`);
@@ -55,12 +55,14 @@ app.server.listen(PORT, HOST, () => {
 
   if (app.auth && app.auth.passwordInicial) {
     console.log("");
-    console.log("  ┌─────────────────────────────────────────────────────────┐");
-    console.log("  │ Se generó una contraseña inicial para el panel.        │");
-    console.log(`  │ usuario:    ${app.auth.usuario.padEnd(43)}│`);
-    console.log(`  │ contraseña: ${app.auth.passwordInicial.padEnd(43)}│`);
-    console.log("  │ Cámbiala con: npm run set-password                     │");
-    console.log("  └─────────────────────────────────────────────────────────┘");
+    console.log("  ==================================================");
+    console.log("   CONTRASENA INICIAL DEL PANEL (anotala)");
+    console.log("  ==================================================");
+    console.log(`   usuario:    ${app.auth.usuario}`);
+    console.log(`   contrasena: ${app.auth.passwordInicial}`);
+    console.log("  ==================================================");
+    console.log("   Cambiala con: npm run set-password");
+    console.log("");
   }
 
   console.log("");
@@ -72,7 +74,7 @@ async function apagar() {
     return;
   }
   cerrando = true;
-  console.log("\nCerrando…");
+  console.log("\nCerrando servidor...");
   await app.close();
   process.exit(0);
 }

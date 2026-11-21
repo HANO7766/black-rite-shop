@@ -1871,7 +1871,121 @@ main > .shell > .empty {
   font-size: 0.78rem;
 }
 
-/* 18. Responsive ----------------------------------------------------------- */
+/* 19. Acceso al panel ------------------------------------------------------ */
+.login-body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  background:
+    radial-gradient(720px 380px at 50% 0%, rgba(210, 35, 56, 0.14), transparent 70%),
+    var(--bg);
+}
+
+.login {
+  width: min(100% - 32px, 430px);
+  padding-block: 48px;
+}
+
+.login__card {
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.login__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login__title {
+  margin-top: 22px;
+  font-family: var(--font-display);
+  font-size: 1.95rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.login__copy {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.login__form {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.login__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.login__form input {
+  height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.login__form input:focus {
+  border-color: var(--red);
+  outline: none;
+}
+
+.login__form .btn {
+  margin-top: 6px;
+}
+
+.login__back {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--muted-dim);
+  font-size: 0.8rem;
+}
+
+.login__back:hover {
+  color: var(--text);
+}
+
+.admin__tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin__user {
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 20. Responsive ----------------------------------------------------------- */
 @media (max-width: 1080px) {
   .nav {
     display: none;

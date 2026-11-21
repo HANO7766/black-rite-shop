@@ -673,7 +673,7 @@ export function orderPage({ orden, recienCreada = false }) {
 
 /* ------------------------------------------------------------------- admin */
 
-function adminShell({ seccion, cuerpo, carrito = 0 }) {
+function adminShell({ seccion, cuerpo, carrito = 0, usuario = "admin" }) {
   const tabs = [
     ["productos", "Productos", "/admin"],
     ["ordenes", "Pedidos", "/admin/ordenes"]
@@ -688,13 +688,65 @@ function adminShell({ seccion, cuerpo, carrito = 0 }) {
         <nav class="admin__tabs">
           ${tabs.map(([id, label, href]) => `<a class="tab${seccion === id ? " is-active" : ""}" href="${href}">${label}</a>`).join("")}
         </nav>
+        <div class="admin__tools">
+          <span class="admin__user" title="Sesión iniciada">${esc(usuario)}</span>
+          <form method="post" action="/admin/logout">
+            <button class="btn btn--ghost btn--xs" type="submit">Cerrar sesión</button>
+          </form>
+        </div>
       </div>
       ${cuerpo}
     </section>`
   });
 }
 
-export function adminProductsPage({ productos }) {
+export function loginPage({ usuario = "admin", error = "", siguiente = "/admin" }) {
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acceso · Black Rite</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/store.css">
+</head>
+<body class="login-body">
+<main class="login">
+  <div class="login__card">
+    <a class="login__brand" href="/">
+      <span class="brand__mark">${MONOGRAMA}</span>
+      <span class="brand__copy"><strong>Black Rite</strong><small>Administración</small></span>
+    </a>
+
+    <h1 class="login__title">Acceso al panel</h1>
+    <p class="login__copy">Ingresa con tu usuario y contraseña para administrar el catálogo y los pedidos.</p>
+
+    ${error ? `<p class="alert" role="alert">${esc(error)}</p>` : ""}
+
+    <form class="login__form" method="post" action="/admin/login">
+      <input type="hidden" name="siguiente" value="${esc(siguiente)}">
+      <label>Usuario
+        <input name="usuario" value="${esc(usuario)}" autocomplete="username" required autofocus>
+      </label>
+      <label>Contraseña
+        <input type="password" name="password" autocomplete="current-password" required minlength="8">
+      </label>
+      <button class="btn btn--primary btn--wide" type="submit">Entrar</button>
+    </form>
+
+    <a class="login__back" href="/">← Volver a la tienda</a>
+  </div>
+</main>
+</body>
+</html>`;
+}
+
+export function adminProductsPage({ productos, usuario = "admin" }) {
   const filas = productos
     .map(
       (p) => `<tr>
@@ -715,6 +767,7 @@ export function adminProductsPage({ productos }) {
 
   return adminShell({
     seccion: "productos",
+    usuario,
     cuerpo: `
     <div class="admin__bar">
       <h2>${productos.length} productos</h2>
@@ -729,7 +782,7 @@ export function adminProductsPage({ productos }) {
   });
 }
 
-export function adminProductFormPage({ producto, error = "" }) {
+export function adminProductFormPage({ producto, error = "", usuario = "admin" }) {
   const esNuevo = !producto;
   const valor = (campo, porDefecto = "") => esc(producto?.[campo] ?? porDefecto);
   const stockDe = (talla) => {
@@ -739,6 +792,7 @@ export function adminProductFormPage({ producto, error = "" }) {
 
   return adminShell({
     seccion: "productos",
+    usuario,
     cuerpo: `
     <div class="admin__bar">
       <h2>${esNuevo ? "Nuevo producto" : "Editar producto"}</h2>
@@ -778,7 +832,7 @@ export function adminProductFormPage({ producto, error = "" }) {
   });
 }
 
-export function adminOrdersPage({ ordenes }) {
+export function adminOrdersPage({ ordenes, usuario = "admin" }) {
   const filas = ordenes
     .map(
       (o) => `<tr>
@@ -803,6 +857,7 @@ export function adminOrdersPage({ ordenes }) {
 
   return adminShell({
     seccion: "ordenes",
+    usuario,
     cuerpo: `
     <div class="admin__bar"><h2>${ordenes.length} pedidos</h2></div>
     <div class="admin__table">

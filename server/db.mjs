@@ -126,6 +126,16 @@ export class ShopDatabase {
         value TEXT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        usuario TEXT NOT NULL,
+        ip TEXT NOT NULL DEFAULT '',
+        creado_en TEXT NOT NULL,
+        expira_en TEXT NOT NULL
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_sessions_expira ON sessions (expira_en);
+
       CREATE INDEX IF NOT EXISTS idx_products_cat ON products (categoria);
       CREATE INDEX IF NOT EXISTS idx_products_created ON products (creado_en DESC);
       CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items (order_id);
@@ -141,6 +151,35 @@ export class ShopDatabase {
     this.db
       .prepare("INSERT INTO meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value")
       .run(key, String(value));
+  }
+
+  /* --------------------------------------------------------------- sesiones */
+
+  createSession({ id, usuario, ip, expiraEn }) {
+    this.db
+      .prepare("INSERT INTO sessions (id, usuario, ip, creado_en, expira_en) VALUES (?, ?, ?, ?, ?)")
+      .run(id, usuario, ip || "", new Date().toISOString(), expiraEn);
+    this.deleteExpiredSessions();
+  }
+
+  getSession(id) {
+    return this.db.prepare("SELECT * FROM sessions WHERE id = ?").get(id) || null;
+  }
+
+  deleteSession(id) {
+    this.db.prepare("DELETE FROM sessions WHERE id = ?").run(id);
+  }
+
+  deleteExpiredSessions() {
+    this.db.prepare("DELETE FROM sessions WHERE expira_en <= ?").run(new Date().toISOString());
+  }
+
+  setAdminHash(hash) {
+    this.setMeta("admin_hash", hash);
+  }
+
+  getAdminHash() {
+    return this.getMeta("admin_hash");
   }
 
   ensureSeed() {

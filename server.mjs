@@ -52,6 +52,17 @@ app.server.listen(PORT, HOST, () => {
   }
   console.log(`  Admin:     http://127.0.0.1:${PORT}/admin`);
   console.log(`  Base:      ${DB_PATH}`);
+
+  if (app.auth && app.auth.passwordInicial) {
+    console.log("");
+    console.log("  ┌─────────────────────────────────────────────────────────┐");
+    console.log("  │ Se generó una contraseña inicial para el panel.        │");
+    console.log(`  │ usuario:    ${app.auth.usuario.padEnd(43)}│`);
+    console.log(`  │ contraseña: ${app.auth.passwordInicial.padEnd(43)}│`);
+    console.log("  │ Cámbiala con: npm run set-password                     │");
+    console.log("  └─────────────────────────────────────────────────────────┘");
+  }
+
   console.log("");
 });
 

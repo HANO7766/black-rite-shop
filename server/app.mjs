@@ -9,6 +9,7 @@ import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import path from "node:path";
 import { ShopDatabase, TALLAS } from "./db.mjs";
+import { createAuth } from "./auth.mjs";
 import {
   adminOrdersPage,
   adminProductFormPage,
@@ -18,6 +19,7 @@ import {
   checkoutPage,
   homePage,
   layout,
+  loginPage,
   notFoundPage,
   orderPage,
   productPage
@@ -109,6 +111,61 @@ function enviarHtml(response, status, html) {
   response.end(html);
 }
 
+/**
+ * Agrega una cookie sin pisar las que ya se hayan puesto en esta respuesta.
+ */
+function ponerCookie(response, valor) {
+  const previas = response.getHeader("Set-Cookie");
+  if (!previas) {
+    response.setHeader("Set-Cookie", valor);
+    return;
+  }
+  const lista = Array.isArray(previas) ? [...previas, valor] : [previas, valor];
+  response.setHeader("Set-Cookie", lista);
+}
+
+function esHttps(request) {
+  if (request.socket && request.socket.encrypted) {
+    return true;
+  }
+  const proto = String(request.headers["x-forwarded-proto"] || "")
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  return proto === "https";
+}
+
+/** IP para el límite de intentos: Cloudflare primero, socket como respaldo. */
+function ipDe(request) {
+  const cf = request.headers["cf-connecting-ip"];
+  if (typeof cf === "string" && cf.trim()) {
+    return cf.trim();
+  }
+  return request.socket.remoteAddress || "desconocida";
+}
+
+/** Defensa CSRF: si el navegador manda Origin, debe coincidir con el host. */
+function origenValido(request) {
+  const origen = request.headers.origin;
+  if (!origen) {
+    return true;
+  }
+  try {
+    return new URL(origen).host === request.headers.host;
+  } catch {
+    return false;
+  }
+}
+
+/** Solo se permite volver a rutas internas del panel. */
+function destinoSeguro(valor) {
+  const destino = String(valor || "").trim();
+  if (destino.startsWith("/admin") && !destino.startsWith("//")) {
+    return destino;
+  }
+  return "/admin";
+}
+
 function redirigir(response, ubicacion, extraHeaders = {}) {
   response.writeHead(303, { Location: ubicacion, "Cache-Control": "no-store", ...extraHeaders });
   response.end();
@@ -154,6 +211,12 @@ export function createShopApp(options = {}) {
   const rootDir = path.resolve(options.rootDir || process.cwd());
   const db = new ShopDatabase(options.dbPath);
   const logger = options.logger || console;
+  const auth = createAuth({
+    db,
+    passwordHash: options.passwordHash ?? process.env.ADMIN_PASSWORD_HASH ?? "",
+    usuario: options.adminUser ?? process.env.ADMIN_USER ?? ""
+  });
+  const NOMBRE_SESION = "br_sesion";
 
   function contexto(request, response) {
     const cookies = parseCookies(request.headers.cookie);
@@ -167,13 +230,14 @@ export function createShopApp(options = {}) {
     }
 
     if (cookieNueva) {
-      response.setHeader(
-        "Set-Cookie",
-        `br_cart=${cartId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`
+      const seguro = esHttps(request) ? "; Secure" : "";
+      ponerCookie(
+        response,
+        `br_cart=${cartId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}${seguro}`
       );
     }
 
-    return { cartId, carrito: db.getCart(cartId) };
+    return { cartId, cookies, carrito: db.getCart(cartId) };
   }
 
   async function manejar(request, response) {
@@ -185,8 +249,76 @@ export function createShopApp(options = {}) {
       return;
     }
 
-    const { cartId, carrito } = contexto(request, response);
+    const { cartId, cookies, carrito } = contexto(request, response);
     const unidades = carrito.unidades;
+    const sesion = auth.sesionDe(cookies[NOMBRE_SESION]);
+
+    /* ------------------------------------------------------------- acceso */
+    if (pathname === "/admin/login" && metodo === "GET") {
+      if (sesion) {
+        return redirigir(response, "/admin");
+      }
+      return enviarHtml(
+        response,
+        200,
+        loginPage({
+          usuario: auth.usuario,
+          siguiente: destinoSeguro(url.searchParams.get("siguiente"))
+        })
+      );
+    }
+
+    if (pathname === "/admin/login" && metodo === "POST") {
+      if (!origenValido(request)) {
+        return enviarHtml(response, 403, notFoundPage());
+      }
+      const datos = await readForm(request);
+      const resultado = auth.autenticar(datos.usuario, datos.password, ipDe(request));
+
+      if (!resultado.ok) {
+        return enviarHtml(
+          response,
+          resultado.codigo === "BLOQUEADO" ? 429 : 401,
+          loginPage({
+            usuario: String(datos.usuario || auth.usuario).slice(0, 40),
+            error: resultado.motivo,
+            siguiente: destinoSeguro(datos.siguiente)
+          })
+        );
+      }
+
+      const idSesion = auth.crearSesion(ipDe(request));
+      const seguro = esHttps(request) ? "; Secure" : "";
+      ponerCookie(
+        response,
+        `${NOMBRE_SESION}=${idSesion}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${auth.duracionHoras * 3600}${seguro}`
+      );
+      return redirigir(response, destinoSeguro(datos.siguiente));
+    }
+
+    /* -------------------------------------------------------- panel privado */
+    if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+      if (!sesion) {
+        return redirigir(response, "/admin/login");
+      }
+      if (metodo === "POST" && !origenValido(request)) {
+        return enviarHtml(
+          response,
+          403,
+          layout({
+            titulo: "Solicitud rechazada",
+            carrito: unidades,
+            cuerpo: `<section class="shell empty"><p class="empty__title">Solicitud rechazada</p><p class="empty__copy">El origen del formulario no coincide con la tienda.</p><a class="btn btn--primary" href="/admin">Volver al panel</a></section>`
+          })
+        );
+      }
+      if (pathname === "/admin/logout" && metodo === "POST") {
+        auth.cerrarSesion(sesion.id);
+        const seguro = esHttps(request) ? "; Secure" : "";
+        ponerCookie(response, `${NOMBRE_SESION}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${seguro}`);
+        return redirigir(response, "/admin/login");
+      }
+    }
 
     /* ------------------------------------------------------------- home */
     if (pathname === "/" && metodo === "GET") {
@@ -386,15 +518,15 @@ export function createShopApp(options = {}) {
 
     /* -------------------------------------------------------------- admin */
     if (pathname === "/admin" && metodo === "GET") {
-      return enviarHtml(response, 200, adminProductsPage({ productos: db.listAllProducts() }));
+      return enviarHtml(response, 200, adminProductsPage({ productos: db.listAllProducts(), usuario: auth.usuario }));
     }
 
     if (pathname === "/admin/ordenes" && metodo === "GET") {
-      return enviarHtml(response, 200, adminOrdersPage({ ordenes: db.listOrders() }));
+      return enviarHtml(response, 200, adminOrdersPage({ ordenes: db.listOrders(), usuario: auth.usuario }));
     }
 
     if (pathname === "/admin/producto/nuevo" && metodo === "GET") {
-      return enviarHtml(response, 200, adminProductFormPage({ producto: null }));
+      return enviarHtml(response, 200, adminProductFormPage({ producto: null, usuario: auth.usuario }));
     }
 
     const editarMatch = /^\/admin\/producto\/([a-f0-9-]{36})$/.exec(pathname);
@@ -403,7 +535,7 @@ export function createShopApp(options = {}) {
       if (!producto) {
         return enviarHtml(response, 404, notFoundPage());
       }
-      return enviarHtml(response, 200, adminProductFormPage({ producto }));
+      return enviarHtml(response, 200, adminProductFormPage({ producto, usuario: auth.usuario }));
     }
 
     if (pathname === "/admin/producto" && metodo === "POST") {
@@ -413,7 +545,7 @@ export function createShopApp(options = {}) {
         return enviarHtml(
           response,
           422,
-          adminProductFormPage({ producto: { ...datos, variants: [], id: null }, error: resultado.motivo })
+          adminProductFormPage({ producto: { ...datos, variants: [], id: null }, error: resultado.motivo, usuario: auth.usuario })
         );
       }
       return redirigir(response, "/admin");
@@ -427,7 +559,7 @@ export function createShopApp(options = {}) {
         return enviarHtml(
           response,
           422,
-          adminProductFormPage({ producto: db.getProductById(guardarMatch[1]), error: resultado.motivo })
+          adminProductFormPage({ producto: db.getProductById(guardarMatch[1]), error: resultado.motivo, usuario: auth.usuario })
         );
       }
       return redirigir(response, "/admin");
@@ -475,6 +607,7 @@ export function createShopApp(options = {}) {
   return {
     server,
     db,
+    auth,
     close: () => {
       db.close();
       return new Promise((resolve) => server.close(resolve));

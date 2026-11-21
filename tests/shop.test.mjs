@@ -10,13 +10,38 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createShopApp } from "../server/app.mjs";
+import { hashPassword } from "../server/auth.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+const CLAVE = "clave-de-prueba-123";
 
 let tmp;
 let app;
 let base;
-let cookie = "";
+
+/** Tarro de cookies: mantiene carrito y sesión por separado. */
+const jar = new Map();
+
+function cookieHeader() {
+  return [...jar.entries()].map(([nombre, valor]) => `${nombre}=${valor}`).join("; ");
+}
+
+function guardarCookies(respuesta) {
+  const lista =
+    typeof respuesta.headers.getSetCookie === "function" ? respuesta.headers.getSetCookie() : [];
+  for (const linea of lista) {
+    const par = linea.split(";")[0];
+    const corte = par.indexOf("=");
+    const nombre = par.slice(0, corte).trim();
+    const valor = par.slice(corte + 1).trim();
+    if (valor === "") {
+      jar.delete(nombre);
+    } else {
+      jar.set(nombre, valor);
+    }
+  }
+}
 
 async function pedir(ruta, opciones = {}) {
   const { metodo = "GET", form, seguir = false } = opciones;
@@ -24,15 +49,12 @@ async function pedir(ruta, opciones = {}) {
     method: metodo,
     redirect: seguir ? "follow" : "manual",
     headers: {
-      ...(cookie ? { cookie } : {}),
+      ...(jar.size ? { cookie: cookieHeader() } : {}),
       ...(form ? { "Content-Type": "application/x-www-form-urlencoded" } : {})
     },
     body: form ? new URLSearchParams(form).toString() : undefined
   });
-  const setCookie = respuesta.headers.get("set-cookie");
-  if (setCookie) {
-    cookie = setCookie.split(";")[0];
-  }
+  guardarCookies(respuesta);
   return { status: respuesta.status, location: respuesta.headers.get("location"), html: await respuesta.text() };
 }
 
@@ -41,6 +63,7 @@ before(async () => {
   app = createShopApp({
     dbPath: path.join(tmp, "shop.db"),
     rootDir: ROOT,
+    passwordHash: hashPassword(CLAVE),
     logger: { log() {}, error() {} }
   });
   await new Promise((resolver) => app.server.listen(0, "127.0.0.1", resolver));
@@ -50,6 +73,69 @@ before(async () => {
 after(async () => {
   await app.close();
   await rm(tmp, { recursive: true, force: true });
+});
+
+test("el panel exige sesión", async () => {
+  const { status, location } = await pedir("/admin");
+  assert.equal(status, 303);
+  assert.equal(location, "/admin/login");
+
+  const formulario = await pedir("/admin/login");
+  assert.equal(formulario.status, 200);
+  assert.match(formulario.html, /Acceso al panel/);
+});
+
+test("credenciales incorrectas no abren sesión", async () => {
+  const { status, html } = await pedir("/admin/login", {
+    metodo: "POST",
+    form: { usuario: "admin", password: "clave-equivocada" }
+  });
+  assert.equal(status, 401);
+  assert.match(html, /incorrectos/i);
+  assert.equal(jar.has("br_sesion"), false);
+});
+
+test("el login correcto crea una cookie de sesión protegida", async () => {
+  const respuesta = await fetch(`${base}/admin/login`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ usuario: "admin", password: CLAVE }).toString()
+  });
+  assert.equal(respuesta.status, 303);
+  assert.equal(respuesta.headers.get("location"), "/admin");
+
+  const cookies = respuesta.headers.getSetCookie();
+  const sesion = cookies.find((c) => c.startsWith("br_sesion="));
+  assert.ok(sesion, "debe entregar la cookie br_sesion");
+  assert.match(sesion, /HttpOnly/);
+  assert.match(sesion, /SameSite=Lax/);
+  assert.match(sesion, /Path=\//);
+
+  guardarCookies(respuesta);
+
+  const panel = await pedir("/admin");
+  assert.equal(panel.status, 200);
+  assert.match(panel.html, /Administración/);
+  assert.match(panel.html, /Cerrar sesión/);
+});
+
+test("la sesión cierra al salir", async () => {
+  const salida = await pedir("/admin/logout", { metodo: "POST", form: {} });
+  assert.equal(salida.status, 303);
+  assert.equal(salida.location, "/admin/login");
+
+  const panel = await pedir("/admin");
+  assert.equal(panel.status, 303);
+  assert.equal(panel.location, "/admin/login");
+
+  // Vuelve a entrar para el resto de las pruebas.
+  const entrada = await pedir("/admin/login", {
+    metodo: "POST",
+    form: { usuario: "admin", password: CLAVE }
+  });
+  assert.equal(entrada.status, 303);
+  assert.equal(jar.has("br_sesion"), true);
 });
 
 test("la home lista destacados y recientes", async () => {
@@ -98,7 +184,7 @@ test("el carrito recibe productos y calcula totales", async () => {
     form: { slug: "metallica-master-of-puppets", variant: variante.id, cantidad: "2" }
   });
   assert.equal(agregar.status, 303);
-  assert.ok(cookie.startsWith("br_cart="));
+  assert.equal(jar.has("br_cart"), true);
 
   const carrito = await pedir("/carrito");
   assert.equal(carrito.status, 200);
@@ -226,4 +312,36 @@ test("una ruta inexistente devuelve 404 con la tienda", async () => {
   const { status, html } = await pedir("/producto/no-existe");
   assert.equal(status, 404);
   assert.match(html, /404/);
+});
+
+test("el panel bloquea tras varios intentos fallidos", async () => {
+  // Este test va al final: deja la IP bloqueada durante la ventana.
+  for (let intento = 1; intento <= 5; intento += 1) {
+    const respuesta = await pedir("/admin/login", {
+      metodo: "POST",
+      form: { usuario: "admin", password: `mala-${intento}` }
+    });
+    assert.equal(respuesta.status, 401, `intento ${intento} debe ser rechazado`);
+  }
+
+  const bloqueado = await pedir("/admin/login", {
+    metodo: "POST",
+    form: { usuario: "admin", password: CLAVE }
+  });
+  assert.equal(bloqueado.status, 429);
+  assert.match(bloqueado.html, /Demasiados intentos/);
+});
+
+test("un POST de administración con otro origen se rechaza", async () => {
+  const respuesta = await fetch(`${base}/admin/producto`, {
+    method: "POST",
+    redirect: "manual",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Origin: "https://sitio-malicioso.example",
+      cookie: cookieHeader()
+    },
+    body: new URLSearchParams({ nombre: "Intruso", precio: "1000" }).toString()
+  });
+  assert.equal(respuesta.status, 403);
 });
